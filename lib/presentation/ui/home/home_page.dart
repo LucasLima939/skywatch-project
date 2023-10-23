@@ -14,6 +14,20 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  late final PageController pageController;
+
+  @override
+  void initState() {
+    pageController = PageController(initialPage: 0);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,6 +46,7 @@ class _HomePageState extends State<HomePage> {
         ),
         body: PageView(
           physics: const NeverScrollableScrollPhysics(),
+          controller: pageController,
           children: [
             VideosScreen(),
             WeatherScreen(),
@@ -51,6 +66,7 @@ class _HomePageState extends State<HomePage> {
                 selectedItemColor: Theme.of(context).primaryColor,
                 unselectedItemColor: Theme.of(context).disabledColor,
                 iconSize: 33,
+                onTap: (index) => pageController.animateToPage(index, duration: const Duration(milliseconds: 50), curve: Curves.linear),
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
                   BottomNavigationBarItem(icon: Icon(Icons.sunny), label: '')
