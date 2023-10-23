@@ -5,7 +5,7 @@ import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 import 'package:skywatch_application/domain/use_cases/use_cases.dart';
 import 'package:skywatch_application/presentation/bloc/weather/weather.dart';
 
-import 'ui/home_page/home_page.dart';
+import 'ui/home/home_page.dart';
 
 class HomeModule extends Module {
   @override
