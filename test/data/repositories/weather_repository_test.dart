@@ -18,8 +18,19 @@ main() {
   late String weatherPath;
 
   final exception = Exception();
-  const startDate = '2023-10-22T00:00:00Z';
-  const endDate = '2023-10-26T00:00:00Z';
+  const sessionToken = 'access_token';
+
+  ForecastModel buildForecastResponse(json) {
+    List<int>? descriptions;
+    final data = json["data"];
+
+    if (data.length > 1) {
+      descriptions =
+          data[1]['coordinates'][0]['dates'].map<int>((json) => int.parse(json['value'].toString())).toList();
+    }
+
+    return ForecastModel.fromJson(data[0]['coordinates'][0], descriptions: descriptions);
+  }
 
   setUp(() {
     locationAdapterMock = LocationAdapterMock();
@@ -30,18 +41,17 @@ main() {
       addressDrive: addressAdapterMock,
       httpDrive: httpAdapterMock,
     );
-    locationResult = const LocationModel.empty();
+    locationResult = LocationModel.empty();
     addressResult = const AddressModel.empty();
-    forecastResult = ForecastModel.empty();
+    forecastResult = buildForecastResponse(HttpResponses.forecastResponse);
     weatherPath = HttpPaths.getWeatherPath(
-      altitude: locationResult.altitude!.toInt(),
-      lat: locationResult.latitude!,
-      lng: locationResult.longitude!,
-      formattedStartDate: startDate,
-      formattedEndDate: endDate,
+      altitude: locationResult.altitude.toInt(),
+      lat: locationResult.latitude,
+      lng: locationResult.longitude,
+      date: locationResult.time!,
     );
     locationAdapterMock.getLocationStub(locationResult);
-    addressAdapterMock.getAddressStub(locationResult.latitude!, locationResult.longitude!, addressResult);
+    addressAdapterMock.getAddressStub(locationResult.latitude, locationResult.longitude, addressResult);
   });
 
   setUpAll(() {
@@ -56,6 +66,8 @@ main() {
     });
 
     test('Should throw exception if has some', () async {
+      locationAdapterMock.getLocationStubError(exception);
+
       final result = sut.getCurrentLocation();
 
       expect(result, throwsA(exception));
@@ -70,6 +82,8 @@ main() {
     });
 
     test('Should throw exception if has some', () async {
+      addressAdapterMock.getAddressStubError(locationResult.latitude, locationResult.longitude, exception);
+
       final result = sut.getCurrentAddress(locationResult);
 
       expect(result, throwsA(exception));
@@ -79,17 +93,21 @@ main() {
   group('Weekly Forecast', () {
     setUp(() {
       httpAdapterMock.getUrlStub(HttpPaths.getWeatherAuth, jsonEncode(HttpResponses.oAuthWeatherResponse),
-          headers: <String, String>{'Authorization': 'Basic username:password'});
+          headers: <String, String>{'Authorization': 'Basic ${HttpPaths.weatherUser}:${HttpPaths.weatherPassword}'});
 
       httpAdapterMock.getUrlStub(weatherPath, jsonEncode(HttpResponses.forecastResponse),
-          queryParameters: <String, String>{'access_token': 'access_token'});
+          queryParameters: <String, String>{'access_token': sessionToken});
+
+      sut.sessionToken = sessionToken;
     });
     test('Should get accessToken if has none', () async {
-      sut.weatherToken = null;
+      sut.sessionToken = null;
 
       await sut.getWeeklyForecast(locationResult);
 
-      verify(() => sut.getAccessToken()).called(1);
+      verify(() => httpAdapterMock.get(HttpPaths.getWeatherAuth, headers: <String, String>{
+            'Authorization': 'Basic ${HttpPaths.weatherUser}:${HttpPaths.weatherPassword}'
+          })).called(1);
     });
     test('Should get current weekly forecast correctly', () async {
       final result = await sut.getWeeklyForecast(locationResult);
@@ -98,9 +116,10 @@ main() {
     });
 
     test('Should throw exception if has some', () async {
-      final result = sut.getWeeklyForecast(locationResult);
+      httpAdapterMock
+          .getUrlStubError(weatherPath, exception, queryParameters: <String, String>{'access_token': sessionToken});
 
-      expect(result, throwsA(exception));
+      expectLater(sut.getWeeklyForecast(locationResult), throwsA(exception));
     });
   });
 }

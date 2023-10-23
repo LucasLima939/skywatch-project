@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
 abstract class LocationEntity extends Equatable {
-  final double? latitude;
-  final double? longitude;
-  final double? altitude;
+  final double latitude;
+  final double longitude;
+  final double altitude;
   final DateTime? time;
   const LocationEntity({
     required this.altitude,

@@ -1,3 +1,5 @@
+import 'package:equatable/equatable.dart';
+
 enum WeatherDescription {
   unknown,
   clearSky('Clear Sky'),
@@ -45,7 +47,7 @@ enum WeatherDescription {
   }
 }
 
-abstract class WeatherEntity {
+abstract class WeatherEntity extends Equatable {
   final WeatherDescription description;
   final double temperature;
   final DateTime? date;
@@ -55,6 +57,7 @@ abstract class WeatherEntity {
     required this.temperature,
   });
 
+  @override
   List<Object?> get props => [
     description,
     temperature,
