@@ -28,6 +28,12 @@
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>
 	<string>Main</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>The app needs your location to fetch weather data</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>The app needs your location to fetch weather data</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>The app needs your location to fetch weather data</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
