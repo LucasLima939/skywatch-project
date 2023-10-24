@@ -1,4 +1,3 @@
-import 'package:geocoder_buddy/geocoder_buddy.dart';
 import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 
 class AddressModel extends AddressEntity {
@@ -7,13 +6,22 @@ class AddressModel extends AddressEntity {
     required super.city,
     required super.country,
     required super.state,
+    required super.stateAbbreviation,
   });
-  const AddressModel.empty() : super(address: null, city: null, country: null, state: null);
-  AddressModel.fromGBData(GBData response)
+  const AddressModel.empty()
       : super(
-          address: response.address.iso31662Lvl4,
-          country: response.address.country,
-          state: response.address.state,
-          city: response.address.county,
+          address: null,
+          city: null,
+          country: null,
+          state: null,
+          stateAbbreviation: null,
+        );
+  AddressModel.fromJson(Map<String, dynamic> json)
+      : super(
+          address: json['road'],
+          city: json['city'],
+          state: json['state'],
+          country: json['country'],
+          stateAbbreviation: json['ISO3166-2-lvl4'],
         );
 }

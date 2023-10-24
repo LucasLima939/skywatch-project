@@ -10,7 +10,6 @@ import '../mocks/mocks.dart';
 main() {
   late WeatherRepositoryImpl sut;
   late LocationAdapterMock locationAdapterMock;
-  late AddressAdapterMock addressAdapterMock;
   late HttpAdapterMock httpAdapterMock;
   late LocationModel locationResult;
   late AddressModel addressResult;
@@ -34,15 +33,13 @@ main() {
 
   setUp(() {
     locationAdapterMock = LocationAdapterMock();
-    addressAdapterMock = AddressAdapterMock();
     httpAdapterMock = HttpAdapterMock();
     sut = WeatherRepositoryImpl(
       locationDrive: locationAdapterMock,
-      addressDrive: addressAdapterMock,
       httpDrive: httpAdapterMock,
     );
     locationResult = LocationModel.empty();
-    addressResult = const AddressModel.empty();
+    addressResult = AddressModel.fromJson(HttpResponses.addressResponse['address']);
     forecastResult = buildForecastResponse(HttpResponses.forecastResponse);
     weatherPath = HttpPaths.getWeatherPath(
       altitude: locationResult.altitude.toInt(),
@@ -51,11 +48,10 @@ main() {
       date: locationResult.time!,
     );
     locationAdapterMock.getLocationStub(locationResult);
-    addressAdapterMock.getAddressStub(locationResult.latitude, locationResult.longitude, addressResult);
   });
 
   setUpAll(() {
-    registerFallbackValue(Uri.parse(HttpPaths.getWeatherAuth));
+    registerFallbackValue(Uri.parse(HttpPaths.getWeatherQuery));
   });
 
   group('Current location', () {
@@ -75,6 +71,10 @@ main() {
   });
 
   group('Current Address', () {
+    setUp(() {
+      httpAdapterMock.getUrlStub(
+          HttpPaths.getAddressQuery(locationResult.latitude, locationResult.longitude), jsonEncode(HttpResponses.addressResponse));
+    });
     test('Should get current address correctly', () async {
       final result = await sut.getCurrentAddress(locationResult);
 
@@ -82,7 +82,8 @@ main() {
     });
 
     test('Should throw exception if has some', () async {
-      addressAdapterMock.getAddressStubError(locationResult.latitude, locationResult.longitude, exception);
+      httpAdapterMock.getUrlStubError(
+          HttpPaths.getAddressQuery(locationResult.latitude, locationResult.longitude), exception);
 
       final result = sut.getCurrentAddress(locationResult);
 
@@ -92,7 +93,7 @@ main() {
 
   group('Weekly Forecast', () {
     setUp(() {
-      httpAdapterMock.getUrlStub(HttpPaths.getWeatherAuth, jsonEncode(HttpResponses.oAuthWeatherResponse),
+      httpAdapterMock.getUrlStub(HttpPaths.getWeatherQuery, jsonEncode(HttpResponses.oAuthWeatherResponse),
           headers: <String, String>{'Authorization': 'Basic ${HttpPaths.weatherUser}:${HttpPaths.weatherPassword}'});
 
       httpAdapterMock.getUrlStub(weatherPath, jsonEncode(HttpResponses.forecastResponse),
@@ -105,7 +106,7 @@ main() {
 
       await sut.getWeeklyForecast(locationResult);
 
-      verify(() => httpAdapterMock.get(HttpPaths.getWeatherAuth, headers: <String, String>{
+      verify(() => httpAdapterMock.get(HttpPaths.getWeatherQuery, headers: <String, String>{
             'Authorization': 'Basic ${HttpPaths.weatherUser}:${HttpPaths.weatherPassword}'
           })).called(1);
     });

@@ -35,6 +35,8 @@ class AppWidget extends StatelessWidget {
         bottomNavigationBarTheme: const BottomNavigationBarThemeData(backgroundColor: Color(0xFF283840)),
         filledButtonTheme: FilledButtonThemeData(
             style: ButtonStyle(backgroundColor: MaterialStateProperty.all(const Color(0xFF5A9AFF)))),
+        textButtonTheme: TextButtonThemeData(
+            style: ButtonStyle(backgroundColor: MaterialStateProperty.all(const Color(0xFFFF464F)))),
         useMaterial3: true,
       ),
       supportedLocales: const [

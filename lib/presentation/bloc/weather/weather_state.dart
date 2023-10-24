@@ -42,8 +42,9 @@ class WeatherForecastState extends WeatherState {
 
 class WeatherFailureState extends WeatherState {
   final Failure failure;
-  const WeatherFailureState(this.failure);
+  final dynamic refreshEvent;
+  const WeatherFailureState(this.failure, [this.refreshEvent]);
 
   @override
-  List<Object?> get props => [failure];
+  List<Object?> get props => [failure, refreshEvent];
 }

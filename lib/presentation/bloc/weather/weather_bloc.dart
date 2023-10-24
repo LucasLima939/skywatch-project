@@ -25,7 +25,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
 
     final response = await getCurrentLocationUseCase(NoParams());
 
-    response.fold((failure) => emit(WeatherFailureState(failure)), (response) => emit(WeatherLocationState(response)));
+    response.fold((failure) => emit(WeatherFailureState(failure, event)), (response) => emit(WeatherLocationState(response)));
   }
 
   FutureOr<void> _getCurrentAddress(GetCurrentAddressEvent event, Emitter<WeatherState> emit) async {
@@ -33,7 +33,7 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
 
     final response = await getCurrentAddressUseCase(event.location);
 
-    response.fold((failure) => emit(WeatherFailureState(failure)), (response) => emit(WeatherAddressState(response)));
+    response.fold((failure) => emit(WeatherFailureState(failure, event)), (response) => emit(WeatherAddressState(response)));
   }
 
 
@@ -42,6 +42,6 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
 
     final response = await getWeeklyForecastUseCase(event.location);
 
-    response.fold((failure) => emit(WeatherFailureState(failure)), (response) => emit(WeatherForecastState(response)));
+    response.fold((failure) => emit(WeatherFailureState(failure, event)), (response) => emit(WeatherForecastState(response)));
   }
 }

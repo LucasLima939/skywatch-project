@@ -11,8 +11,8 @@ class HomeModule extends Module {
   @override
   void binds(i) {
     // Repositories
-    i.addLazySingleton<WeatherRepository>(() => WeatherRepositoryImpl(
-        addressDrive: i.get<AddressDrive>(), httpDrive: i.get<HttpDrive>(), locationDrive: i.get<LocationDrive>()));
+    i.addLazySingleton<WeatherRepository>(
+        () => WeatherRepositoryImpl(httpDrive: i.get<HttpDrive>(), locationDrive: i.get<LocationDrive>()));
     // Use Case
     i.addLazySingleton<GetCurrentAddressUseCase>(() => GetCurrentAddressUseCase(i.get<WeatherRepository>()));
     i.addLazySingleton<GetCurrentLocationUseCase>(() => GetCurrentLocationUseCase(i.get<WeatherRepository>()));

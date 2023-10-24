@@ -14,5 +14,5 @@ class LocationModel extends LocationEntity {
             altitude: data.altitude ?? 0.0,
             latitude: data.latitude ?? 0.0,
             longitude: data.longitude ?? 0.0,
-            time: data.time != null ? DateTime.fromMicrosecondsSinceEpoch(data.time!.toInt()) : null);
+            time: null);
 }

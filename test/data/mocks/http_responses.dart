@@ -40,4 +40,30 @@ class HttpResponses {
           }
         ]
       };
+  static get addressResponse => {
+        "place_id": 281801698,
+        "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+        "osm_type": "way",
+        "osm_id": 741753433,
+        "lat": "37.42202505",
+        "lon": "-122.08407788511707",
+        "category": "leisure",
+        "type": "outdoor_seating",
+        "place_rank": 30,
+        "importance": 9.99999999995449e-06,
+        "addresstype": "leisure",
+        "name": "",
+        "display_name": "Amphitheatre Parkway, Mountain View, Santa Clara County, California, 94043, United States",
+        "address": {
+          "road": "Amphitheatre Parkway",
+          "city": "Mountain View",
+          "county": "Santa Clara County",
+          "state": "California",
+          "ISO3166-2-lvl4": "US-CA",
+          "postcode": "94043",
+          "country": "United States",
+          "country_code": "us"
+        },
+        "boundingbox": ["37.4219599", "37.4221426", "-122.0842118", "-122.0839386"]
+      };
 }

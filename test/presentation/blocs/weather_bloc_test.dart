@@ -58,7 +58,7 @@ void main() {
       act: (WeatherBloc bloc) => bloc.add(const GetCurrentLocationEvent()),
       expect: () => [
         const WeatherLoadingState(),
-        WeatherFailureState(failure),
+        WeatherFailureState(failure, const GetCurrentLocationEvent()),
       ],
     );
   });
@@ -85,7 +85,7 @@ void main() {
       act: (WeatherBloc bloc) => bloc.add(GetCurrentAddressEvent(locationResponse)),
       expect: () => [
         const WeatherLoadingState(),
-        WeatherFailureState(failure),
+        WeatherFailureState(failure, GetCurrentAddressEvent(locationResponse)),
       ],
     );
   });
@@ -112,7 +112,7 @@ void main() {
       act: (WeatherBloc bloc) => bloc.add(GetWeeklyForecastEvent(locationResponse)),
       expect: () => [
         const WeatherLoadingState(),
-        WeatherFailureState(failure),
+        WeatherFailureState(failure, GetWeeklyForecastEvent(locationResponse)),
       ],
     );
   });

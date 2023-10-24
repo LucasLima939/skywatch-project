@@ -6,7 +6,6 @@ class CoreModule extends Module {
   @override
   void exportedBinds(i) {
     // Adapters
-    i.addLazySingleton<AddressDrive>(() => AddressAdapter());
     i.addLazySingleton<HttpDrive>(() => HttpAdapter());
     i.addLazySingleton<LocationDrive>(() => LocationAdapter());
   }

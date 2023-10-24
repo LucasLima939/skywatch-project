@@ -15,10 +15,12 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late final PageController pageController;
+  int currentIndex = 0;
 
   @override
   void initState() {
-    pageController = PageController(initialPage: 0);
+    pageController = PageController(initialPage: currentIndex);
+    widget.weatherBloc.add(const GetCurrentLocationEvent());
     super.initState();
   }
 
@@ -49,7 +51,7 @@ class _HomePageState extends State<HomePage> {
           controller: pageController,
           children: [
             VideosScreen(),
-            WeatherScreen(),
+            WeatherScreen(widget.weatherBloc),
           ],
         ),
         bottomNavigationBar: Container(
@@ -66,7 +68,11 @@ class _HomePageState extends State<HomePage> {
                 selectedItemColor: Theme.of(context).primaryColor,
                 unselectedItemColor: Theme.of(context).disabledColor,
                 iconSize: 33,
-                onTap: (index) => pageController.animateToPage(index, duration: const Duration(milliseconds: 50), curve: Curves.linear),
+                currentIndex: currentIndex,
+                onTap: (index) {
+                  setState(() => currentIndex = index);
+                  pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+                },
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
                   BottomNavigationBarItem(icon: Icon(Icons.sunny), label: '')
