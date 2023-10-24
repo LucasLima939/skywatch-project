@@ -34,6 +34,12 @@
 	<string>The app needs your location to fetch weather data</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>The app needs your location to fetch weather data</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>The app needs access you library to select video</string>
+	<key>NSCameraUsageDescription</key>
+	<string>The app needs access you library to select video</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>The app needs access you library to select video</string>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
