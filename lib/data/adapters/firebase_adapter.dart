@@ -22,9 +22,9 @@ class FirebaseAdapter implements FirebaseDrive {
       .then((data) => {'data': data.docs.map((doc) => doc.data()).toList()});
 
   @override
-  Future<bool> updateList(String key, String value, String refs, String uid) async =>
+  Future<bool> updateList(String key, String value, String refs, String uid, {required bool shouldRemoveElement}) async =>
       await FirebaseFirestore.instance.collection(refs).doc(uid).update({
-        key: FieldValue.arrayUnion([value])
+        key: shouldRemoveElement ? FieldValue.arrayRemove([value]) : FieldValue.arrayUnion([value])
       }).then((value) => true);
 
   @override

@@ -38,6 +38,13 @@ class VideosRepositoryImpl implements VideosRepository {
   Future<bool> likeVideo(SkyVideoEntity entity) async {
     if(entity.uid == null) return false;
     if (uid == null) await getUserAnonymousId();
-    return await firebaseDrive.updateList('likes', uid!, FirebaseRefs.videos, entity.uid!);
+    return await firebaseDrive.updateList('likes', uid!, FirebaseRefs.videos, entity.uid!, shouldRemoveElement: true);
+  }
+
+  @override
+  Future<bool> removeLikeVideo(SkyVideoEntity entity) async {
+    if(entity.uid == null) return false;
+    if (uid == null) await getUserAnonymousId();
+    return await firebaseDrive.updateList('likes', uid!, FirebaseRefs.videos, entity.uid!, shouldRemoveElement: false);
   }
 }
