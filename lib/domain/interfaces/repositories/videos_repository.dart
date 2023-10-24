@@ -8,5 +8,5 @@ abstract class VideosRepository {
   Future<String> uploadVideo(File file, String fileName);
   Future<String?> getUserAnonymousId();
   Future<bool> likeVideo(SkyVideoEntity entity);
-  Future<File?> getVideo({bool shouldRecord = false, int maxMinutes = 10});
+  Future<File?> getVideo({bool shouldRecord = false, int maxMinutes = 1});
 }
