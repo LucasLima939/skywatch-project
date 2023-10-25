@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 import 'package:skywatch_application/presentation/bloc/weather/weather.dart';
+import 'package:skywatch_application/presentation/ui/components/components.dart';
 import 'package:skywatch_application/presentation/ui/mixins/state_manager.dart';
 import 'package:skywatch_application/presentation/ui/ui.dart';
 
@@ -54,7 +55,7 @@ class _WeatherScreenState extends State<WeatherScreen> with StateManager {
               return isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : todayForecast == null || weeklyForecast == null
-                      ? _buildEmptyPlaceholder()
+                      ? DefaultEmptyPlaceholder(onRefresh: _initWeatherPage)
                       : RefreshIndicator(
                           onRefresh: _initWeatherPage,
                           color: Theme.of(context).primaryColor,
@@ -77,13 +78,6 @@ class _WeatherScreenState extends State<WeatherScreen> with StateManager {
       ),
     );
   }
-
-  Widget _buildEmptyPlaceholder() => Center(
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-        const Text('No data found', style: TextStyle(color: Colors.white, fontSize: 16)),
-        const SizedBox(height: 20),
-        FilledButton(onPressed: _initWeatherPage, child: const Text('Refresh')),
-      ]));
 
   Future<void> _initWeatherPage() async {
     if (currentLocation == null) {
