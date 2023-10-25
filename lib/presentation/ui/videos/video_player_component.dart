@@ -41,12 +41,9 @@ class _VideoPlayerComponentState extends State<VideoPlayerComponent> {
             return VisibilityDetector(
               key: UniqueKey(),
               onVisibilityChanged: startIfVisible,
-              child: GestureDetector(
-                onTap: pauseOrResume,
-                child: AspectRatio(
-                  aspectRatio: _controller.value.aspectRatio,
-                  child: VideoPlayer(_controller),
-                ),
+              child: AspectRatio(
+                aspectRatio: _controller.value.aspectRatio,
+                child: VideoPlayer(_controller),
               ),
             );
           } else {
