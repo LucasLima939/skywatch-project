@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:skywatch_application/presentation/bloc/videos/videos.dart';
 import 'package:skywatch_application/presentation/bloc/weather/weather.dart';
+import 'package:skywatch_application/presentation/ui/components/components.dart';
 import 'package:skywatch_application/presentation/ui/ui.dart';
 
 class HomePage extends StatefulWidget {
   final WeatherBloc weatherBloc;
+  final VideosBloc videosBloc;
   const HomePage({
     super.key,
     required this.weatherBloc,
+    required this.videosBloc,
   });
 
   @override
@@ -40,6 +44,7 @@ class _HomePageState extends State<HomePage> {
               boxShadow: [BoxShadow(color: Colors.black38, spreadRadius: 0, blurRadius: 10)],
             ),
             child: AppBar(
+              leading: Container(),
               title: Text('SkyWatch', style: Theme.of(context).textTheme.titleLarge),
               centerTitle: true,
               backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
@@ -50,7 +55,7 @@ class _HomePageState extends State<HomePage> {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           children: [
-            VideosScreen(),
+            VideosScreen(widget.videosBloc, widget.weatherBloc, openUploadBottomSheet: _openUploadBottomSheet),
             WeatherScreen(widget.weatherBloc),
           ],
         ),
@@ -71,7 +76,8 @@ class _HomePageState extends State<HomePage> {
                 currentIndex: currentIndex,
                 onTap: (index) {
                   setState(() => currentIndex = index);
-                  pageController.animateToPage(index, duration: const Duration(milliseconds: 200), curve: Curves.linear);
+                  pageController.animateToPage(index,
+                      duration: const Duration(milliseconds: 200), curve: Curves.linear);
                 },
                 items: const <BottomNavigationBarItem>[
                   BottomNavigationBarItem(icon: Icon(Icons.home), label: ''),
@@ -80,4 +86,12 @@ class _HomePageState extends State<HomePage> {
               ),
             )));
   }
+
+  void _openUploadBottomSheet() => showBottomSheet(
+      context: context,
+      backgroundColor: Colors.black12,
+      builder: (context) => UploadVideoBottomSheet(
+            widget.videosBloc,
+            widget.weatherBloc,
+          ));
 }

@@ -29,9 +29,9 @@ class LikeVideoEvent extends VideosEvent {
   List<Object?> get props => [entity, liked];
 }
 
-class GetVideoFile extends VideosEvent {
+class GetVideoFileEvent extends VideosEvent {
   final bool shouldRecord;
-  const GetVideoFile(this.shouldRecord);
+  const GetVideoFileEvent(this.shouldRecord);
 
   @override
   List<Object?> get props => [shouldRecord];

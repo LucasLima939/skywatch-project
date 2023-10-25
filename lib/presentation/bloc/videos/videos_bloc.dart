@@ -10,21 +10,21 @@ class VideosBloc extends Bloc<VideosEvent, VideosStates> {
   final GetVideoResponseUseCase getVideoResponseUseCase;
   final GetVideoUseCase getVideoUseCase;
   final LikeVideoUseCase likeVideoUseCase;
-  final LikeVideoUseCase removeLikeVideoUseCase;
+  final RemoveLikeVideoUseCase removeLikeVideoUseCase;
   final UploadVideoUseCase uploadVideoUseCase;
   final WriteEntityUseCase writeEntityUseCase;
-  VideosBloc({
-    required this.getVideoResponseUseCase,
-    required this.getVideoUseCase,
-    required this.likeVideoUseCase,
-    required this.removeLikeVideoUseCase,
-    required this.uploadVideoUseCase,
-    required this.writeEntityUseCase,
-  }) : super(const VideosIdleStates()) {
+  VideosBloc(
+    this.getVideoResponseUseCase,
+    this.getVideoUseCase,
+    this.likeVideoUseCase,
+    this.removeLikeVideoUseCase,
+    this.uploadVideoUseCase,
+    this.writeEntityUseCase,
+  ) : super(const VideosIdleStates()) {
     on<GetVideoResponseEvent>(_onGetVideoResponse);
     on<UploadVideoEvent>(_onUploadVideo);
     on<LikeVideoEvent>(_onLikeVideoEvent);
-    on<GetVideoFile>(_onGetVideoFile);
+    on<GetVideoFileEvent>(_onGetVideoFile);
   }
 
   FutureOr<void> _onGetVideoResponse(GetVideoResponseEvent event, Emitter<VideosStates> emit) async {
@@ -52,7 +52,7 @@ class VideosBloc extends Bloc<VideosEvent, VideosStates> {
     }
   }
 
-  FutureOr<void> _onGetVideoFile(GetVideoFile event, Emitter<VideosStates> emit) async {
+  FutureOr<void> _onGetVideoFile(GetVideoFileEvent event, Emitter<VideosStates> emit) async {
     emit(const VideoLoadingState());
 
     final response = await getVideoUseCase(event.shouldRecord);
