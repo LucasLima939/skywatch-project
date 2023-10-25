@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:skywatch_application/presentation/bloc/videos/videos.dart';
 import 'package:skywatch_application/presentation/bloc/weather/weather.dart';
-import 'package:skywatch_application/presentation/ui/components/components.dart';
 import 'package:skywatch_application/presentation/ui/ui.dart';
 
 class HomePage extends StatefulWidget {
@@ -55,7 +54,7 @@ class _HomePageState extends State<HomePage> {
           physics: const NeverScrollableScrollPhysics(),
           controller: pageController,
           children: [
-            VideosScreen(widget.videosBloc, widget.weatherBloc, openUploadBottomSheet: _openUploadBottomSheet),
+            VideosScreen(widget.videosBloc, widget.weatherBloc),
             WeatherScreen(widget.weatherBloc),
           ],
         ),
@@ -86,11 +85,4 @@ class _HomePageState extends State<HomePage> {
               ),
             )));
   }
-
-  Future _openUploadBottomSheet() => showDialog(
-      context: context,
-      builder: (context) => UploadVideoBottomSheet(
-            widget.videosBloc,
-            widget.weatherBloc,
-          ));
 }

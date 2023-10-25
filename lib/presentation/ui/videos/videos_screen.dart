@@ -9,8 +9,7 @@ import 'package:skywatch_application/presentation/ui/videos/videos.dart';
 class VideosScreen extends StatefulWidget {
   final VideosBloc videosBloc;
   final WeatherBloc weatherBloc;
-  final Future Function() openUploadBottomSheet;
-  const VideosScreen(this.videosBloc, this.weatherBloc, {required this.openUploadBottomSheet, super.key});
+  const VideosScreen(this.videosBloc, this.weatherBloc, {super.key});
 
   @override
   State<VideosScreen> createState() => _VideosScreenState();
@@ -50,13 +49,20 @@ class _VideosScreenState extends State<VideosScreen> {
           }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
-        onPressed: () async => await widget.openUploadBottomSheet().then((isSuccess) {
+        onPressed: () async => await _openUploadBottomSheet().then((isSuccess) {
           if (isSuccess == true) _initVideosPage();
         }),
         child: const Icon(Icons.add, color: Colors.white),
       ),
     );
   }
+
+  Future _openUploadBottomSheet() => showDialog(
+      context: context,
+      builder: (context) => UploadVideoBottomSheet(
+            widget.videosBloc,
+            widget.weatherBloc,
+          ));
 
   Future<void> _initVideosPage() async => widget.videosBloc.add(const GetVideoResponseEvent());
 }

@@ -61,6 +61,8 @@ class _VideoPlayerComponentState extends State<VideoPlayerComponent> {
     var visiblePercentage = visibilityInfo.visibleFraction * 100;
     if (visiblePercentage > 50 && !_controller.value.isPlaying) {
       _controller.play();
+    } else if (_controller.value.isPlaying) {
+      _controller.pause();
     }
   }
 

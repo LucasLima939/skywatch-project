@@ -1,6 +1,6 @@
-# skywatch_application
+# What's SkyWatch
 
-A new Flutter project.
+SkyWatch is a cross-platform application developed using Flutter framework and runs in Android & iOS platforms.
 
 ## Getting Started
 

@@ -39,7 +39,9 @@ class _UploadVideoBottomSheetState extends State<UploadVideoBottomSheet> {
           children: [
             GestureDetector(
               onTap: _hideKeyboard,
-              child: Container(
+              child: AnimatedContainer(
+                padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+                duration: const Duration(milliseconds: 300),
                 decoration: BoxDecoration(
                     color: Theme.of(context).appBarTheme.backgroundColor,
                     borderRadius: const BorderRadius.only(topRight: Radius.circular(20), topLeft: Radius.circular(20))),
