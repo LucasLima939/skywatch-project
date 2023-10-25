@@ -10,9 +10,7 @@ class FirebaseAdapter implements FirebaseDrive {
   Future<String> uploadVideo(File file, String filePath) async {
     final uploadTask = FirebaseStorage.instance.ref().child(filePath).putFile(file);
 
-    final snapshot = await uploadTask.whenComplete(() {});
-
-    return await snapshot.ref.getDownloadURL();
+    return await uploadTask.then((snapshot) async => await snapshot.ref.getDownloadURL());
   }
 
   @override
@@ -22,14 +20,22 @@ class FirebaseAdapter implements FirebaseDrive {
       .then((data) => {'data': data.docs.map((doc) => doc.data()).toList()});
 
   @override
-  Future<bool> updateList(String key, String value, String refs, String uid, {required bool shouldRemoveElement}) async =>
+  Future<bool> updateList(String key, String value, String refs, String uid,
+          {required bool shouldRemoveElement}) async =>
       await FirebaseFirestore.instance.collection(refs).doc(uid).update({
         key: shouldRemoveElement ? FieldValue.arrayRemove([value]) : FieldValue.arrayUnion([value])
       }).then((value) => true);
 
   @override
-  Future<bool> writeData(Map<String, dynamic> data, String refs, String uid) async =>
-      await FirebaseFirestore.instance.collection(refs).doc(uid).update(data).then((value) => true);
+  Future<bool> writeData(Map<String, dynamic> data, String refs, String uid, bool isEditing) async {
+    final doc = FirebaseFirestore.instance.collection(refs).doc(uid);
+    if (isEditing) {
+      await doc.update(data);
+    } else {
+      await doc.set(data);
+    }
+    return true;
+  }
 
   @override
   Future<String?> signInAnonymously() async =>

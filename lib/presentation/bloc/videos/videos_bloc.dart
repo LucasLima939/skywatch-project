@@ -23,8 +23,10 @@ class VideosBloc extends Bloc<VideosEvent, VideosStates> {
   ) : super(const VideosIdleStates()) {
     on<GetVideoResponseEvent>(_onGetVideoResponse);
     on<UploadVideoEvent>(_onUploadVideo);
+    on<SubmitVideoEvent>(_onSubmitVideoEvent);
     on<LikeVideoEvent>(_onLikeVideoEvent);
     on<GetVideoFileEvent>(_onGetVideoFile);
+    on<ClearVideoFileEvent>(_onClearVideoFileEvent);
   }
 
   FutureOr<void> _onGetVideoResponse(GetVideoResponseEvent event, Emitter<VideosStates> emit) async {
@@ -37,6 +39,16 @@ class VideosBloc extends Bloc<VideosEvent, VideosStates> {
   }
 
   FutureOr<void> _onUploadVideo(UploadVideoEvent event, Emitter<VideosStates> emit) async {
+    emit(const VideoLoadingState());
+
+    final name = '${DateTime.now().millisecondsSinceEpoch}-${event.fileName}';
+
+    final response = await uploadVideoUseCase.call(UploadVideoParam(file: event.file, fileName: name));
+
+    response.fold((failure) => emit(VideoFailureState(failure, event)), (url) => emit(DownloadVideoSuccessState(url)));
+  }
+
+  FutureOr<void> _onSubmitVideoEvent(SubmitVideoEvent event, Emitter<VideosStates> emit) async {
     emit(const VideoLoadingState());
 
     final response = await writeEntityUseCase(event.entity);
@@ -52,12 +64,18 @@ class VideosBloc extends Bloc<VideosEvent, VideosStates> {
     }
   }
 
+  FutureOr<void> _onClearVideoFileEvent(ClearVideoFileEvent event, Emitter<VideosStates> emit) async {
+    emit(const VideosIdleStates());
+
+    emit(const VideoFileResponseState(null));
+  }
+
   FutureOr<void> _onGetVideoFile(GetVideoFileEvent event, Emitter<VideosStates> emit) async {
     emit(const VideoLoadingState());
 
     final response = await getVideoUseCase(event.shouldRecord);
 
-    response.fold((failure) => emit(VideoFailureState(failure)), (file) {
+    await response.fold((failure) async => emit(VideoFailureState(failure)), (file) async {
       if (file != null) {
         emit(VideoFileResponseState(file));
       } else {

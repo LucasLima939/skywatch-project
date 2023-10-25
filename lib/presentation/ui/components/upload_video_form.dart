@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skywatch_application/data/models/models.dart';
@@ -24,12 +26,13 @@ class UploadVideoForm extends StatefulWidget {
 }
 
 class _UploadVideoFormState extends State<UploadVideoForm> {
-  late TextEditingController fileNameController = TextEditingController();
   late TextEditingController descriptionController = TextEditingController();
   late TextEditingController weatherController = TextEditingController(text: 'Unknown');
   final _formKey = GlobalKey<FormState>();
   bool isLoading = false;
+  File? selectedFile;
   String? downloadUrl;
+  String? get fileName => selectedFile?.path.split('/').last;
   String? get currentLocation => widget.currentAddress?.stateAbbreviation;
   String? get description => descriptionController.text.isEmpty ? null : descriptionController.text;
 
@@ -38,8 +41,18 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
     return BlocBuilder<VideosBloc, VideosStates>(
         bloc: widget.videosBloc,
         builder: (context, state) {
+          isLoading = false;
           if (state is VideoLoadingState) {
             isLoading = true;
+          } else if (state is VideoFileResponseState) {
+            selectedFile = state.file;
+            _formKey.currentState!.validate();
+          } else if (state is DownloadVideoSuccessState) {
+            isLoading = true;
+            downloadUrl = state.downloadUrl;
+            widget.videosBloc.add(SubmitVideoEvent(_buildVideoModel()));
+          } else if (state is SubmitVideoSuccessState) {
+            Navigator.pop(context);
           }
 
           return Padding(
@@ -52,18 +65,23 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                 children: [
                   const SizedBox(height: 8),
                   TextFormField(
-                    controller: fileNameController,
                     readOnly: true,
-                    decoration: const InputDecoration(
-                      suffixIcon: Icon(Icons.upload, color: Colors.white),
-                      hintText: 'Click to upload your video',
-                      hintStyle: TextStyle(color: Colors.white),
+                    decoration: InputDecoration(
+                      suffixIcon: IconButton(
+                          icon: Icon(selectedFile == null ? Icons.upload : Icons.close),
+                          color: Colors.white,
+                          onPressed: () {
+                            if (isLoading) return;
+                            if (selectedFile == null) {
+                              _openSelectFileBottomSheet();
+                            } else {
+                              widget.videosBloc.add(const ClearVideoFileEvent());
+                            }
+                          }),
+                      hintText: fileName ?? 'Click to upload your video',
+                      hintStyle: const TextStyle(color: Colors.white),
                     ),
-                    validator: (value) {
-                      if (value?.isNotEmpty == true) return null;
-                      return 'Please select a file';
-                    },
-                    onTap: isLoading ? () {} : _openSelectFileBottomSheet,
+                    validator: (value) => selectedFile == null ? 'Please select a file' : null,
                   ),
                   const SizedBox(height: 5),
                   TextFormField(
@@ -71,6 +89,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
                     controller: descriptionController,
                     maxLength: 40,
                     readOnly: isLoading,
+                    style: const TextStyle(color: Colors.white),
                     decoration: const InputDecoration(
                         hintText: 'Type your description...',
                         hintStyle: TextStyle(color: Colors.white),
@@ -114,15 +133,21 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
           height: 80,
           width: MediaQuery.of(context).size.width * .5,
           child: FilledButton(
-              onPressed: isLoading ? () {} : _uploadVideo,
-              child: isLoading ? const CircularProgressIndicator() : const Text('Publish')),
+              onPressed: _uploadVideo,
+              child: isLoading
+                  ? const SizedBox(height: 15, width: 15, child: CircularProgressIndicator(color: Colors.white))
+                  : const Text('Publish')),
         ),
       );
 
   void _uploadVideo() {
     _hideKeyboard();
-    if (_formKey.currentState!.validate() && downloadUrl != null) {
-      final model = SkyVideoModel(
+    if (_formKey.currentState!.validate() && selectedFile != null && !isLoading) {
+      widget.videosBloc.add(UploadVideoEvent(selectedFile!, fileName!));
+    }
+  }
+
+  SkyVideoEntity _buildVideoModel() => SkyVideoModel(
         downloadUrl: downloadUrl!,
         likes: const [],
         locationAbbreviation: currentLocation ?? 'Unknown',
@@ -130,9 +155,6 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
         date: DateTime.now(),
         description: description,
       );
-      widget.videosBloc.add(UploadVideoEvent(model));
-    }
-  }
 
   void _getLocation() {
     if (currentLocation == null && !isLoading) {
@@ -152,7 +174,6 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
 
   @override
   void dispose() {
-    fileNameController.dispose();
     descriptionController.dispose();
     weatherController.dispose();
     super.dispose();

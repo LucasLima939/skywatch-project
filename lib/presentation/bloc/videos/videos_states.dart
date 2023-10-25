@@ -23,7 +23,7 @@ class GetVideosResponseStates extends VideosStates {
 }
 
 class VideoFileResponseState extends VideosStates {
-  final File file;
+  final File? file;
   const VideoFileResponseState(this.file);
 
   @override
@@ -37,6 +37,14 @@ class VideoFailureState extends VideosStates {
 
   @override
   List<Object?> get props => [failure, refreshEvent];
+}
+
+class DownloadVideoSuccessState extends VideosStates {
+  final String downloadUrl;
+  const DownloadVideoSuccessState(this.downloadUrl);
+
+  @override
+  List<Object?> get props => [downloadUrl];
 }
 
 class SubmitVideoSuccessState extends VideosStates {

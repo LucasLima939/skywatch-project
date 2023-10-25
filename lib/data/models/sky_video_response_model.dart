@@ -3,6 +3,6 @@ import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 
 class SkyVideoResponseModel extends SkyVideoResponseEntity {
   SkyVideoResponseModel.fromJson(Map<String, dynamic> json)
-      : super(entities: json['data'].map((j) => SkyVideoModel.fromJson(j)).toList());
+      : super(entities: json['data'].map<SkyVideoEntity>((j) => SkyVideoModel.fromJson(j)).toList());
   const SkyVideoResponseModel({required super.entities});
 }

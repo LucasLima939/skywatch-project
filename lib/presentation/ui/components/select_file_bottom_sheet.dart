@@ -25,7 +25,7 @@ class SelectFileBottomSheet extends StatelessWidget {
                     FocusScope.of(context).unfocus();
                     onSelectOption(true);
                   },
-                  title: Text('Record from Camera',
+                  title: Text('Record from camera',
                       style: TextStyle(
                         color: Theme.of(context).appBarTheme.backgroundColor,
                         fontSize: 16,

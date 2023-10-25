@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:skywatch_application/data/models/models.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 import 'package:skywatch_application/presentation/bloc/videos/videos.dart';
 import 'package:skywatch_application/presentation/bloc/weather/weather.dart';
+import 'package:skywatch_application/presentation/ui/components/components.dart';
 import 'package:skywatch_application/presentation/ui/videos/videos.dart';
 
 class VideosScreen extends StatefulWidget {
@@ -16,33 +17,37 @@ class VideosScreen extends StatefulWidget {
 }
 
 class _VideosScreenState extends State<VideosScreen> {
-  late final entities = List<SkyVideoEntity>.filled(
-      6,
-      SkyVideoModel(
-        downloadUrl: '',
-        likes: [],
-        locationAbbreviation: 'Unknown',
-        weatherTag: 'sunny',
-        date: DateTime.now(),
-        description: 'Lorem ipsum dolor sit amet, consectetur...',
-      ));
-  late final SkyVideoResponseEntity videos = SkyVideoResponseModel(entities: entities);
+  SkyVideoResponseEntity? videos;
+  late bool isLoading;
 
   @override
   void initState() {
-    widget.videosBloc.add(const GetVideoResponseEvent());
+    _initVideosPage();
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: [
-          VideosResultHeader(videos.entities.length),
-          VideoResultBody(videos.entities),
-        ],
-      ),
+      body: BlocBuilder<VideosBloc, VideosStates>(
+          bloc: widget.videosBloc,
+          builder: (context, state) {
+            isLoading = false;
+            if (state is GetVideosResponseStates) {
+              videos = state.entity;
+            } else if (state is VideoLoadingState) {
+              isLoading = true;
+            }
+
+            return isLoading
+                ? const Center(child: CircularProgressIndicator(color: Colors.white))
+                : videos?.entities.isNotEmpty == true
+                    ? Column(children: [
+                        VideosResultHeader(videos!.entities.length),
+                        VideoResultBody(videos!.entities, onRefresh: _initVideosPage),
+                      ])
+                    : DefaultEmptyPlaceholder(onRefresh: _initVideosPage);
+          }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Theme.of(context).primaryColor,
         onPressed: widget.openUploadBottomSheet,
@@ -50,4 +55,6 @@ class _VideosScreenState extends State<VideosScreen> {
       ),
     );
   }
+
+  Future<void> _initVideosPage() async => widget.videosBloc.add(const GetVideoResponseEvent());
 }

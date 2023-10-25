@@ -11,10 +11,10 @@ class VideosRepositoryImpl implements VideosRepository {
     required this.firebaseDrive,
     required this.filePickerDrive,
   });
-  String? uid;
+  String? ownerId;
 
   @override
-  Future<String?> getUserAnonymousId() async => uid ??= await firebaseDrive.signInAnonymously();
+  Future<String?> getUserAnonymousId() async => ownerId ??= await firebaseDrive.signInAnonymously();
 
   @override
   Future<File?> getVideo({bool shouldRecord = false, int maxMinutes = 1}) async =>
@@ -26,25 +26,29 @@ class VideosRepositoryImpl implements VideosRepository {
 
   @override
   Future<bool> writeEntity(SkyVideoEntity entity) async {
-    if (uid == null) await getUserAnonymousId();
-    return await firebaseDrive.writeData(entity.toJson(uid!), FirebaseRefs.videos, uid!);
+    if (ownerId == null) await getUserAnonymousId();
+    return await firebaseDrive.writeData(entity.toJson(ownerId!), FirebaseRefs.videos, entity.uid, false);
   }
 
   @override
-  Future<String> uploadVideo(File file, String fileName) async =>
-      await firebaseDrive.uploadVideo(file, "$uid/$fileName");
+  Future<String> uploadVideo(File file, String fileName) async {
+    if (ownerId == null) await getUserAnonymousId();
+    return await firebaseDrive.uploadVideo(file, "$ownerId/$fileName");
+  }
 
   @override
   Future<bool> likeVideo(SkyVideoEntity entity) async {
-    if(entity.uid == null) return false;
-    if (uid == null) await getUserAnonymousId();
-    return await firebaseDrive.updateList('likes', uid!, FirebaseRefs.videos, entity.uid!, shouldRemoveElement: true);
+    if (entity.ownerUid == null) return false;
+    if (ownerId == null) await getUserAnonymousId();
+    return await firebaseDrive.updateList('likes', ownerId!, FirebaseRefs.videos, entity.ownerUid!,
+        shouldRemoveElement: true);
   }
 
   @override
   Future<bool> removeLikeVideo(SkyVideoEntity entity) async {
-    if(entity.uid == null) return false;
-    if (uid == null) await getUserAnonymousId();
-    return await firebaseDrive.updateList('likes', uid!, FirebaseRefs.videos, entity.uid!, shouldRemoveElement: false);
+    if (entity.ownerUid == null) return false;
+    if (ownerId == null) await getUserAnonymousId();
+    return await firebaseDrive.updateList('likes', ownerId!, FirebaseRefs.videos, entity.ownerUid!,
+        shouldRemoveElement: false);
   }
 }

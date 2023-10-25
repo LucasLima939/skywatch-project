@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:equatable/equatable.dart';
 import 'package:skywatch_application/domain/interfaces/interfaces.dart';
 
@@ -13,8 +15,17 @@ class GetVideoResponseEvent extends VideosEvent {
 }
 
 class UploadVideoEvent extends VideosEvent {
+  final File file;
+  final String fileName;
+  const UploadVideoEvent(this.file, this.fileName);
+
+  @override
+  List<Object?> get props => [file, fileName];
+}
+
+class SubmitVideoEvent extends VideosEvent {
   final SkyVideoEntity entity;
-  const UploadVideoEvent(this.entity);
+  const SubmitVideoEvent(this.entity);
 
   @override
   List<Object?> get props => [entity];
@@ -36,3 +47,8 @@ class GetVideoFileEvent extends VideosEvent {
   @override
   List<Object?> get props => [shouldRecord];
 }
+
+class ClearVideoFileEvent extends VideosEvent {
+  const ClearVideoFileEvent();
+}
+
