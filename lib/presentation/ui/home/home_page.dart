@@ -87,9 +87,8 @@ class _HomePageState extends State<HomePage> {
             )));
   }
 
-  void _openUploadBottomSheet() => showBottomSheet(
+  Future _openUploadBottomSheet() => showDialog(
       context: context,
-      backgroundColor: Colors.black12,
       builder: (context) => UploadVideoBottomSheet(
             widget.videosBloc,
             widget.weatherBloc,

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
+import 'package:visibility_detector/visibility_detector.dart';
 
 class VideoPlayerComponent extends StatefulWidget {
   final String url;
@@ -20,9 +21,6 @@ class _VideoPlayerComponentState extends State<VideoPlayerComponent> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(Uri.parse(widget.url));
     _initializeVideoPlayerFuture = _controller.initialize();
-    _initializeVideoPlayerFuture.whenComplete(() {
-      pauseOrResume();
-    });
     _controller.setLooping(true);
   }
 
@@ -40,11 +38,15 @@ class _VideoPlayerComponentState extends State<VideoPlayerComponent> {
         future: _initializeVideoPlayerFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.done) {
-            return GestureDetector(
-              onTap: pauseOrResume,
-              child: AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
+            return VisibilityDetector(
+              key: UniqueKey(),
+              onVisibilityChanged: startIfVisible,
+              child: GestureDetector(
+                onTap: pauseOrResume,
+                child: AspectRatio(
+                  aspectRatio: _controller.value.aspectRatio,
+                  child: VideoPlayer(_controller),
+                ),
               ),
             );
           } else {
@@ -53,6 +55,13 @@ class _VideoPlayerComponentState extends State<VideoPlayerComponent> {
         },
       ),
     );
+  }
+
+  void startIfVisible(visibilityInfo) {
+    var visiblePercentage = visibilityInfo.visibleFraction * 100;
+    if (visiblePercentage > 50 && !_controller.value.isPlaying) {
+      _controller.play();
+    }
   }
 
   void pauseOrResume() {

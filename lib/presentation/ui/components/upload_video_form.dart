@@ -52,7 +52,7 @@ class _UploadVideoFormState extends State<UploadVideoForm> {
             downloadUrl = state.downloadUrl;
             widget.videosBloc.add(SubmitVideoEvent(_buildVideoModel()));
           } else if (state is SubmitVideoSuccessState) {
-            Navigator.pop(context);
+            Navigator.of(context).pop(true);
           }
 
           return Padding(

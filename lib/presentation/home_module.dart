@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_modular/flutter_modular.dart';
 import 'package:skywatch_application/data/repositories/repositories.dart';
 import 'package:skywatch_application/domain/interfaces/drivers/drivers.dart';
@@ -47,12 +46,9 @@ class HomeModule extends Module {
   @override
   void routes(r) {
     r.child('/',
-        child: (context) => Scaffold(
-          backgroundColor: Colors.black12,
-          body: HomePage(
-                weatherBloc: Modular.get<WeatherBloc>(),
-                videosBloc: Modular.get<VideosBloc>(),
-              ),
-        ));
+        child: (context) => HomePage(
+              weatherBloc: Modular.get<WeatherBloc>(),
+              videosBloc: Modular.get<VideosBloc>(),
+            ));
   }
 }
