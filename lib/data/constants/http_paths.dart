@@ -3,8 +3,8 @@ import 'package:intl/intl.dart';
 class HttpPaths {
   HttpPaths._();
   static final formatter = DateFormat('yyyy-MM-ddThh:mm:ss');
-  static String get weatherUser => 'teste_teste_teste';
-  static String get weatherPassword => 'fK0Um2Z9tS'; // TEST CREDENTIAL ONLY
+  static String get weatherUser => 'iddig_idea_digital';
+  static String get weatherPassword => '1IO6rpkBB6'; // TEST CREDENTIAL ONLY
 
   static String get getWeatherQuery => 'https://login.meteomatics.com/api/v1/token';
   static String get _weatherBase => 'https://api.meteomatics.com';
