@@ -4,6 +4,10 @@ SkyWatch is a cross-platform application developed using Flutter framework and i
 
 Using SkyWatch you can check out the current weather for your localization, see the forecast for the next 4 days and share short videos showing the current weather.
 
+## Dependencies
+- [Meteomatics](https://www.meteomatics.com): Create a free-trial account [here](https://www.meteomatics.com/en/sign-up-weather-api-test-account/) and set your user and password at "http_paths.dart".
+- [Nominatim OpenStreetMap](https://nominatim.openstreetmap.org).
+
 ## UI Reference
 For compare the final UI with the designed UI/UX see
 [Figma's SkyWatch project](https://www.figma.com/file/h1ZoyPKTIGRGXfVwYH6WJP/SkyWatch-(FoxBox)?type=design&node-id=0%3A361&mode=design&t=fsFKnHapC4GV3en9-1), which presents detailed components and color palettes.
